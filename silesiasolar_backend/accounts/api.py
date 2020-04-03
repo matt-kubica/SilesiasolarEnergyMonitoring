@@ -1,6 +1,7 @@
 from rest_framework import generics, viewsets, views, status
 # from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
 
 from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
 
@@ -10,7 +11,7 @@ from django.contrib.auth.models import User
 from django.http import Http404
 
 
-# TODO: superuser api
+
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = RegisterSerializer
@@ -47,4 +48,26 @@ class UserAPI(views.APIView):
             serializer = UserSerializer(user, many=False)
             return Response(serializer.data)
         except User.DoesNotExist:
-            return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"error": "Permission denied"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class AdminUserAPI(views.APIView):
+    permission_classes = [IsAdminUser, ]
+
+    def get(self, request, format=None):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+    # TODO: post, put, delete
+
+class AdminDetailUserAPI(views.APIView):
+    permission_classes = [IsAdminUser, ]
+
+    def get(self, request, pk, format=None):
+        try:
+            user = User.objects.get(id=pk)
+            serializer = UserSerializer(user, many=False)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
