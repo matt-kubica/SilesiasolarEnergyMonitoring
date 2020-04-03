@@ -11,7 +11,7 @@ from .permissions import DoesRequestingUserExist, IsOwner
 # api endpoint to get information about locations of logged user or to post new location of logged user
 class UserLocationAPI(views.APIView):
     permission_classes = [DoesRequestingUserExist, IsOwner, ]
-    # TODO: additional permissions ? isLocationOwner or smth like that
+    # TODO: additional permissions ?
     # TODO: put and delete
 
     def get(self, request, format=None):
@@ -28,7 +28,11 @@ class UserLocationAPI(views.APIView):
 
 
 class UserMeterAPI(views.APIView):
+    permission_classes = [DoesRequestingUserExist, IsOwner, ]
+    # TODO: additional permissions ?
+
 
     def get(self, request, format=None):
-        if not User.objects.filter(id=request.user.id):
-            return Response({"error": "You're not permitted to get locations"}, status=status.HTTP_403_FORBIDDEN)
+        meters = Meter.objects.filter(user=request.user.id)
+        serializer = MeterSerializer(meters, many=True)
+        return Response(serializer.data)
