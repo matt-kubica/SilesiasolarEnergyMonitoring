@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'knox',
+    'django_createsuperuser',
 ]
 
 MIDDLEWARE = [

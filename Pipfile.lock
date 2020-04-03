@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "51817554125ed63ac41bc458be61ece473e52978e57df63821fd108ec664c062"
+            "sha256": "5f7b55b299adff4ca6f2b75abede57116190f38c0c9bab2a2c9ea2c149d6a6d9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -56,6 +56,13 @@
             ],
             "version": "==1.14.0"
         },
+        "click": {
+            "hashes": [
+                "sha256:8a18b4ea89d8820c5d0c7da8a64b2c324b4dabb695804dbfea19b9be9d88c0cc",
+                "sha256:e345d143d80bf5ee7534056164e5e112ea5e22716bbb1ce727941f4c8b471b9a"
+            ],
+            "version": "==7.1.1"
+        },
         "cryptography": {
             "hashes": [
                 "sha256:0cacd3ef5c604b8e5f59bf2582c076c98a37fe206b31430d0cd08138aff0986e",
@@ -87,6 +94,13 @@
             ],
             "index": "pypi",
             "version": "==3.0.5"
+        },
+        "django-createsuperuser": {
+            "hashes": [
+                "sha256:c72c366528c988f8bc2a3187347de01a214fdaa9d9ef937a0485138905fd7796"
+            ],
+            "index": "pypi",
+            "version": "==2019.9.7"
         },
         "django-rest-knox": {
             "hashes": [
