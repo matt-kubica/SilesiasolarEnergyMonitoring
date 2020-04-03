@@ -16,6 +16,9 @@ class Location(models.Model):
     coord_x = models.FloatField(null=True, blank=True)
     coord_y = models.FloatField(null=True, blank=True)
 
+    class Meta:
+        unique_together = ('street', 'number', 'city',)
+
 
 class Meter(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
