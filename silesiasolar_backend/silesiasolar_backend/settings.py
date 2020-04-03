@@ -25,6 +25,8 @@ SECRET_KEY = '9z$k1*f(r7%48&l87j6^sz)0k-rb4ii!9&)gcg-e05ca7@gtyi'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+ADMIN_ENABLED = False
+
 ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
