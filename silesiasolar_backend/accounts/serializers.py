@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
 
+# TODO: superuser serializers
+
 # serialize user data required for registration
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
