@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import views, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from .models import Location, Register, Meter, Node
@@ -28,7 +28,7 @@ class UserLocationAPI(views.APIView):
 
 
 class UserMeterAPI(views.APIView):
-    permission_classes = [DoesRequestingUserExist, IsOwner, ]
+    permission_classes = [DoesRequestingUserExist, ]
     # TODO: additional permissions ?
 
 
@@ -36,3 +36,22 @@ class UserMeterAPI(views.APIView):
         meters = Meter.objects.filter(user=request.user.id)
         serializer = MeterSerializer(meters, many=True)
         return Response(serializer.data)
+
+
+class AdminMeterAPI(views.APIView):
+    permission_classes = [IsAdminUser, ]
+    # TODO: put and delete
+
+    def get(self, request, format=None):
+        meters = Meter.objects.all()
+        serializer = MeterSerializer(meters, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = MeterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
