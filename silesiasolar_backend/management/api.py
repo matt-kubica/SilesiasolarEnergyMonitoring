@@ -7,8 +7,10 @@ from .models import Location, Register, Meter, Node
 from .serializers import LocationSerializer, MeterSerializer, NodeSerializer
 
 
-class LocationAPI(views.APIView):
-    # permission_classes = (IsAuthenticated, DoesUserExist)
+# api endpoint to get information about locations of logged user or to post new location of logged user
+class UserLocationAPI(views.APIView):
+    # TODO: additional permissions ?
+    # TODO: put and delete
 
     def get(self, request, format=None):
         if not User.objects.filter(id=request.user.id):
@@ -27,3 +29,4 @@ class LocationAPI(views.APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
