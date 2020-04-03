@@ -1,11 +1,10 @@
 from django.urls import path, include
-from .api import UserLocationAPI, UserMeterAPI, AdminMeterAPI, AdminLocationAPI
+from .api import UserLocationAPI, UserMeterAPI
 
 urlpatterns = [
     path('locations', UserLocationAPI.as_view()),
     path('meters', UserMeterAPI.as_view()),
-    path('admin/locations', AdminLocationAPI.as_view()),
-    path('admin/meters', AdminMeterAPI.as_view()),
+
 
 
     # path('meter', MeterAPI.as_view()),
