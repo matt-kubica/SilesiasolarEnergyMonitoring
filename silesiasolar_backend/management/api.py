@@ -27,6 +27,22 @@ class UserLocationAPI(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class AdminLocationAPI(views.APIView):
+    permission_classes = [IsAdminUser, ]
+
+    def get(self, request, format=None):
+        locations = Location.objects.all()
+        serializer = LocationSerializer(locations, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = LocationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class UserMeterAPI(views.APIView):
     permission_classes = [DoesRequestingUserExist, ]
     # TODO: additional permissions ?
