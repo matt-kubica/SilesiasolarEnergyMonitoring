@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts',
     'management',
     'admin_management',
+    'influx_updater',
 
     'rest_framework',
     'knox',
