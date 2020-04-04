@@ -17,7 +17,7 @@ class MeterSerializer(serializers.ModelSerializer):
         # check if user is owner of the location
         if attrs['location'] not in Location.objects.filter(user=attrs['user']):
             raise serializers.ValidationError({"structural_error": "Meter and its location must belong to same user"})
-
+        return attrs
 
 
 class RegisterSerializer(serializers.ModelSerializer):
