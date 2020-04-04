@@ -22,24 +22,18 @@ class Location(models.Model):
 
 class Meter(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+
     host = models.CharField(max_length=15, null=False, validators=[RegexValidator(regex=ip_regex)])
     port = models.PositiveIntegerField(null=False)
     slave_address = models.PositiveSmallIntegerField(null=False)
-    type = models.PositiveIntegerField(choices=MeterTypes.choices())
-    model = models.CharField(max_length=30, unique=False)
+
+    meter_id = models.CharField(max_length=32, unique=False)
     assigned = models.BooleanField(default=False)
+    description = models.CharField(max_length=128)
 
-
-class Node(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    meter = models.ForeignKey(Meter, blank=True, null=True, on_delete=models.CASCADE)
-    nodes_connected = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
-
-    type = models.PositiveIntegerField(choices=NodeTypes.choices())
-    main = models.BooleanField(default=False)
-    description = models.CharField(max_length=100)
-
+    class Meta:
+        unique_together = ('host', 'port', 'slave_address', )
 
 class Register(models.Model):
     meter_id = models.CharField(max_length=32, unique=False)
