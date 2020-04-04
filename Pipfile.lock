@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5f7b55b299adff4ca6f2b75abede57116190f38c0c9bab2a2c9ea2c149d6a6d9"
+            "sha256": "7fdc862280bea4d0c481cde5f17ab756dfe6ce2c879a2b6d673bad79f3882a3d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,14 @@
         ]
     },
     "default": {
+        "apscheduler": {
+            "hashes": [
+                "sha256:3bb5229eed6fbbdafc13ce962712ae66e175aa214c69bed35a06bffcf0c5e244",
+                "sha256:e8b1ecdb4c7cb2818913f766d5898183c7cb8936680710a4d3a966e02262e526"
+            ],
+            "index": "pypi",
+            "version": "==3.6.3"
+        },
         "asgiref": {
             "hashes": [
                 "sha256:8036f90603c54e93521e5777b2b9a39ba1bad05773fcf2d208f0299d1df58ce5",
@@ -95,6 +103,13 @@
             "index": "pypi",
             "version": "==3.0.5"
         },
+        "django-apscheduler": {
+            "hashes": [
+                "sha256:a2530736793064c54b3d5a62fc3844cdc4b0535d8988cd9248375c71441d2152"
+            ],
+            "index": "pypi",
+            "version": "==0.3.0"
+        },
         "django-createsuperuser": {
             "hashes": [
                 "sha256:c72c366528c988f8bc2a3187347de01a214fdaa9d9ef937a0485138905fd7796"
@@ -146,6 +161,13 @@
                 "sha256:e162203737712307dfe78860cc56c8da8a852ab2ee33750e33aeadf38d12c548"
             ],
             "version": "==0.3.1"
+        },
+        "tzlocal": {
+            "hashes": [
+                "sha256:11c9f16e0a633b4b60e1eede97d8a46340d042e67b670b290ca526576e039048",
+                "sha256:949b9dd5ba4be17190a80c0268167d7e6c92c62b30026cf9764caf3e308e5590"
+            ],
+            "version": "==2.0.0"
         }
     },
     "develop": {}

@@ -10,6 +10,8 @@ django = "*"
 django-rest-knox = "*"
 djangorestframework = "*"
 django-createsuperuser = "*"
+django-apscheduler = "*"
+apscheduler = "*"
 
 [requires]
 python_version = "3.7"
