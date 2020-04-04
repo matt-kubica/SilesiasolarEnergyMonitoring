@@ -34,17 +34,18 @@ class Node(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     meter = models.ForeignKey(Meter, blank=True, null=True, on_delete=models.CASCADE)
+    nodes_connected = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+
     type = models.PositiveIntegerField(choices=NodeTypes.choices())
-    nodes_connected = models.ManyToManyField('self', blank=True)
     main = models.BooleanField(default=False)
     description = models.CharField(max_length=100)
 
 
 class Register(models.Model):
-    meter_id = models.CharField(max_length=30, unique=False)
+    meter_id = models.CharField(max_length=32, unique=False)
     address = models.PositiveIntegerField(null=False)
-    measurement = models.CharField(max_length=30, null=False)
-    unit = models.CharField(max_length=5, blank=True, null=True)
+    measurement = models.CharField(max_length=64, null=False)
+    unit = models.CharField(max_length=8, blank=True, null=True)
     type = models.PositiveIntegerField(choices=DataTypes.choices(), null=False)
     function_code = models.PositiveIntegerField(choices=FunctionCodes.choices(), null=False)
     sf_address = models.PositiveIntegerField(blank=True, null=True)

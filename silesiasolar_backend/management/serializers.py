@@ -33,6 +33,6 @@ class NodeSerializer(serializers.ModelSerializer):
         return data
 
     @staticmethod
-    def check_if_meter_assigned(meter_id):
-        meter = Meter.objects.get(pk=meter_id)
+    def check_if_meter_assigned(meter):
+        meter = Meter.objects.get(pk=meter.id)
         return meter.assigned

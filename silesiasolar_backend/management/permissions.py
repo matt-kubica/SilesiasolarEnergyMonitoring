@@ -10,8 +10,9 @@ class DoesRequestingUserExist(permissions.BasePermission):
         return False
 
 
-class IsOwner(permissions.BasePermission):
+class IsAllowedToPost(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return request.user.id == request.data['user']
-
+        if request.method == 'POST':
+            return request.user.id == request.data['user']
+        return True

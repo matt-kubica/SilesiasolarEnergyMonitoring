@@ -1,9 +1,10 @@
 from django.urls import path, include
-from .api import UserLocationAPI, UserMeterAPI
+from .api import LocationAPI, MeterAPI, NodeAPI
 
 urlpatterns = [
-    path('locations', UserLocationAPI.as_view()),
-    path('meters', UserMeterAPI.as_view()),
+    path('locations', LocationAPI.as_view()),
+    path('meters', MeterAPI.as_view()),
+    path('nodes', NodeAPI.as_view())
 
 
 
