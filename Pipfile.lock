@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7fdc862280bea4d0c481cde5f17ab756dfe6ce2c879a2b6d673bad79f3882a3d"
+            "sha256": "39f99061499c256d07367f6278b297ded67414c536f6913131b01deb8722ddd0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -140,6 +140,13 @@
                 "sha256:7582ad22678f0fcd81102833f60ef8d0e57288b6b5fb00323d101be910e35705"
             ],
             "version": "==2.20"
+        },
+        "pymodbustcp": {
+            "hashes": [
+                "sha256:61721105608bd533a703c15f62e431426f986398e2fdbe7f9729ddc58678a90b"
+            ],
+            "index": "pypi",
+            "version": "==0.1.8"
         },
         "pytz": {
             "hashes": [

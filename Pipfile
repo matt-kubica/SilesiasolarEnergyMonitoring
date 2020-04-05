@@ -12,6 +12,7 @@ djangorestframework = "*"
 django-createsuperuser = "*"
 django-apscheduler = "*"
 apscheduler = "*"
+pymodbustcp = "*"
 
 [requires]
 python_version = "3.7"
