@@ -13,6 +13,8 @@ django-createsuperuser = "*"
 django-apscheduler = "*"
 apscheduler = "*"
 pymodbustcp = "*"
+gunicorn = "*"
+psycopg2-binary = "==2.8.3"
 
 [requires]
 python_version = "3.7"

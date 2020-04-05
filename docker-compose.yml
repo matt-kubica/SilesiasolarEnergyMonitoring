@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  backend:
+    container_name: silesiasolar_backend
+    build: ./
+    command: python silesiasolar_backend/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./:/app
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - default_db
+      - influx_db
+
+  default_db:
+    container_name: silesiasolar_default_db
+    image: postgres:12.0
+    ports:
+      - 15432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=silesiasolar_root
+      - POSTGRES_PASSWORD=fotomonitor2020
+      - POSTGRES_DB=silesiasolar_backend
+
+  influx_db:
+    container_name: silesiasolar_influx_db
+    image: influxdb:latest
+    ports:
+      - 8086:8086
+    volumes:
+      - influxdb_data:/var/lib/influxdb/data
+
+volumes:
+  postgres_data:
+  influxdb_data:
