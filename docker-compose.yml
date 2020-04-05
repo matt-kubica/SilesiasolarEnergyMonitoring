@@ -13,7 +13,7 @@ services:
       - ./.env.dev
     depends_on:
       - default_db
-      - influx_db
+      - influx
 
   default_db:
     container_name: silesiasolar_default_db
@@ -22,18 +22,18 @@ services:
       - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=silesiasolar_root
-      - POSTGRES_PASSWORD=fotomonitor2020
-      - POSTGRES_DB=silesiasolar_backend
+    env_file:
+      - ./.env.dev
 
-  influx_db:
+  influx:
     container_name: silesiasolar_influx_db
     image: influxdb:latest
     ports:
       - 8086:8086
     volumes:
       - influxdb_data:/var/lib/influxdb/data
+    env_file:
+      - ./.env.dev
 
 volumes:
   postgres_data:
