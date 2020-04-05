@@ -19,7 +19,7 @@ services:
     container_name: silesiasolar_default_db
     image: postgres:12.0
     ports:
-      - 15432:5432
+      - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
