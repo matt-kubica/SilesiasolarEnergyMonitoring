@@ -1,80 +1,50 @@
-from pyModbusTCP.client import ModbusClient as TCPModbusClient
-from pyModbusTCP import utils
+from pymodbus.client.sync import ModbusTcpClient
+from .exceptions import UnknownDatatypeException, UnknownFunctioncodeException, ReadError
+from management.utils import DataTypes, FunctionCodes
+import numpy as np
 
+class ModbusClient(ModbusTcpClient):
 
+    def __init__(self, host, port, slave_address):
+        self.host = host
+        self.port = port
+        self.slave_address = slave_address
+        ModbusTcpClient.__init__(self, host=host, port=port)
+        if not self.connect():
+            raise ConnectionError('Cannot connect to {0}:{1}'.format(host, port))
 
-class ModbusClient(TCPModbusClient):
-
-    def __init__(self, host, port, slaveaddress, timeout=1):
-        self.__host = host
-        self.__port = port
-        self.__slaveaddress = slaveaddress
-        TCPModbusClient.__init__(self, host=host, port=port, unit_id=slaveaddress, timeout=timeout, auto_open=True)
-
-    def get_host(self):
-        return self.__host
-
-    def get_port(self):
-        return self.__port
-
-    def get_slaveaddress(self):
-        return self.__slaveaddress
-
-    # raises UnknownDatatypeException, ReadError, FunctioncodeException
-    def get_register_data(self, address, datatype, functioncode):
-        if (datatype == 'float'):
-            return self.__read_float(address, functioncode)
-        elif (datatype == 'int'):
-            return self.__read_int(address, functioncode)
-        elif (datatype == 'long'):
-            return self.__read_long(address, functioncode)
+    def convert(self, registers, data_type):
+        if data_type == DataTypes.INT:
+            return registers[0]
+        elif data_type == DataTypes.FLOAT:
+            tmp = np.array(registers, np.int16)
+            tmp.dtype = np.float32
+            return tmp[0]
         else:
-            raise UnknownDatatypeException('Unknown datatype: ' + str(datatype))
+            tmp = np.array(registers, np.int16)
+            tmp.dtype = np.int32
+            return tmp[0]
 
-    def __read_float(self, address, functioncode):
-        if (functioncode == 3):
-            register = self.read_holding_registers(reg_addr=address, reg_nb=2)
-            if register:
-                return utils.decode_ieee(utils.word_list_to_long(register)[0])
-            else:
-                raise ReadError('Error during reading register: ' + str(address))
-        elif (functioncode == 4):
-            register = self.read_input_registers(reg_addr=address, reg_nb=2)
-            if register:
-                return  utils.decode_ieee(utils.word_list_to_long(register)[0])
-            else:
-                raise ReadError('Error during reading register: ' + str(address))
-        else:
-            raise FunctioncodeException('Undefined functioncode: ' + str(functioncode))
+    def get_value(self, register_address, function_code, data_type):
+        response = None
+        bytes_count = None
 
-    def __read_int(self, address, functioncode):
-        if (functioncode == 3):
-            register = self.read_holding_registers(reg_addr=address, reg_nb=1)
-            if register:
-                return register[0]
-            else:
-                raise ReadError('Error during reading register: ' + str(address))
-        elif (functioncode == 4):
-            register = self.read_input_registers(reg_addr=address, reg_nb=1)
-            if register:
-                return register[0]
-            else:
-                raise ReadError('Error during reading register: ' + str(address))
+        if data_type in (DataTypes.LONG, DataTypes.FLOAT):
+            bytes_count = 2
+        elif data_type in (DataTypes.INT, ):
+            bytes_count = 1
         else:
-            raise FunctioncodeException('Undefined functioncode: ' + str(functioncode))
+            raise UnknownDatatypeException('Unknown data type with id: {0}'.format(data_type))
 
-    def __read_long(self, address, functioncode):
-        if (functioncode == 3):
-            register = self.read_holding_registers(reg_addr=address, reg_nb=2)
-            if register:
-                return utils.word_list_to_long(register)[0]
-            else:
-                raise ReadError('Error during reading register: ' + str(address))
-        elif (functioncode == 4):
-            register = self.read_input_registers(reg_addr=address, reg_nb=2)
-            if register:
-                return utils.word_list_to_long(register)[0]
-            else:
-                raise ReadError('Error during reading register: ' + str(address))
+        if function_code == FunctionCodes.READ_INPUT_REGISTERS:
+            response = self.read_input_registers(address=register_address, count=bytes_count, unit=self.slave_address)
+        elif function_code == FunctionCodes.READ_HOLDING_REGISTERS:
+            response = self.read_input_registers(address=register_address, count=bytes_count, unit=self.slave_address)
         else:
-            raise FunctioncodeException('Undefined functioncode: ' + str(functioncode))
+            raise UnknownFunctioncodeException('Unknown function code: {0}'.format(function_code))
+
+        if response.isError():
+            raise ReadError('Cannot get value from register: {0}, slave_address: {1}'.format(register_address, self.slave_address))
+
+        return self.convert(response.registers, data_type)
+

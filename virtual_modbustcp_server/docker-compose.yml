@@ -6,3 +6,12 @@ services:
     command: python -u modbustcp_server.py
     ports: 
       - "502"
+    networks:
+      silesiasolar_backend_default_network:
+        ipv4_address: 192.168.1.1
+
+
+networks:
+  silesiasolar_backend_default_network:
+    external: true
+    

@@ -115,6 +115,12 @@ DATABASES = {
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
         "HOST": os.environ.get("DB_HOST", "localhost"),
         "PORT": os.environ.get("DB_PORT", "5432"),
+    },
+    "influx": {
+        "HOST": os.environ.get("INFLUXDB_HOSTNAME"),
+        "PORT": os.environ.get("INFLUXDB_PORT"),
+        "ADMIN_USER": os.environ.get("INFLUXDB_ADMIN_USER"),
+        "ADMIN_PASS": os.environ.get("INFLUXDB_ADMIN_PASSWORD")
     }
 }
 

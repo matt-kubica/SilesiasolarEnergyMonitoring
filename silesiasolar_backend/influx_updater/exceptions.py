@@ -5,5 +5,5 @@ class ReadError(Exception):
 class UnknownDatatypeException(Exception):
     pass
 
-class FunctioncodeException(Exception):
+class UnknownFunctioncodeException(Exception):
     pass

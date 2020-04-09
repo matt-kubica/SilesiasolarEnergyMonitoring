@@ -1,7 +1,7 @@
 from django.core.validators import RegexValidator
 from django.db import models
 from django.contrib.auth.models import User
-from .utils import DataTypes, FunctionCodes, NodeTypes, MeterTypes
+from .utils import DataTypes, FunctionCodes
 
 zip_code_regex = '^[0-9]{2}-[0-9]{3}$'
 ip_regex = '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
@@ -24,11 +24,12 @@ class Meter(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
 
-    host = models.CharField(max_length=15, null=False, validators=[RegexValidator(regex=ip_regex)])
+    # host = models.CharField(max_length=15, null=False, validators=[RegexValidator(regex=ip_regex)])
+    host = models.CharField(max_length=32, null=False)
     port = models.PositiveIntegerField(null=False)
     slave_address = models.PositiveSmallIntegerField(null=False)
 
-    meter_id = models.CharField(max_length=32, unique=False)
+    meter_type = models.CharField(max_length=32, unique=False)
     assigned = models.BooleanField(default=False)
     description = models.CharField(max_length=128)
 
@@ -36,7 +37,8 @@ class Meter(models.Model):
         unique_together = ('host', 'port', 'slave_address', )
 
 class Register(models.Model):
-    meter_id = models.CharField(max_length=32, unique=False)
+    # TODO: try to apply many to many relation between meter and register models
+    meter_type = models.CharField(max_length=32, unique=False)
     address = models.PositiveIntegerField(null=False)
     measurement = models.CharField(max_length=64, null=False)
     unit = models.CharField(max_length=8, blank=True, null=True)

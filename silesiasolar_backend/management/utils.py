@@ -6,17 +6,6 @@ class CustomEnum(IntEnum):
         return [(key.value, key.name) for key in cls]
 
 
-class NodeTypes(CustomEnum):
-    METER = 1
-    FORK = 2
-
-
-class MeterTypes(CustomEnum):
-    BIDIRECTIONAL = 1
-    PRODUCTION = 2
-    CONSUMPTION = 3
-
-
 class DataTypes(CustomEnum):
     INT = 1
     LONG = 2

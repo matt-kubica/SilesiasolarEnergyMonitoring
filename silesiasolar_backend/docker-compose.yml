@@ -14,6 +14,8 @@ services:
     depends_on:
       - default_db
       - influx
+    networks:
+      - default_network
 
   default_db:
     container_name: silesiasolar_default_db
@@ -24,6 +26,8 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.dev
+    networks:
+      - default_network
 
   influx:
     container_name: silesiasolar_influx_db
@@ -34,7 +38,23 @@ services:
       - influxdb_data:/var/lib/influxdb/data
     env_file:
       - ./.env.dev
+    networks:
+      - default_network
+
+  modbustcp_server:
+    container_name: modbustcp_server
+    build: ../virtual_modbustcp_server
+    command: python -u modbustcp_server.py
+    ports:
+      - 502:502
+    networks:
+      - default_network
 
 volumes:
   postgres_data:
   influxdb_data:
+
+networks:
+  default_network:
+    driver: bridge
+
