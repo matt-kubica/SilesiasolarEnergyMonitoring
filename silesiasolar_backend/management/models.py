@@ -33,6 +33,9 @@ class Meter(models.Model):
     assigned = models.BooleanField(default=False)
     description = models.CharField(max_length=128)
 
+    def __str__(self):
+        return '{0}:{1}:{2}'.format(self.host, self.port, self.slave_address)
+
     class Meta:
         unique_together = ('host', 'port', 'slave_address', )
 

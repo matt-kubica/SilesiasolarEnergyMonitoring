@@ -12,10 +12,14 @@ import os
 from django.core.wsgi import get_wsgi_application
 from django.conf import settings
 from . import scheduler
+import logging
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'silesiasolar_backend.settings')
 
 application = get_wsgi_application()
+
+# logging start
+logging.getLogger('django').setLevel(logging.INFO)
 
 # scheduler must be started here since it is wsgi application,
 # starting in other place would case creating multiple scheduler instances

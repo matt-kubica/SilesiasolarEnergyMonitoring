@@ -14,9 +14,7 @@ def start():
     # scheduler = BackgroundScheduler(settings.SCHEDULER_CONFIG)
     scheduler = BackgroundScheduler()
 
-    if settings.DEBUG:
-        logging.basicConfig()
-        logging.getLogger('apscheduler').setLevel(logging.DEBUG)
+    logging.getLogger('apscheduler')
 
     scheduler.add_job(updated_influx, trigger='cron', minute="*/1")
     scheduler.start()
