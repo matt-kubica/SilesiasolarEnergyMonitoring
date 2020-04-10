@@ -119,6 +119,7 @@ DATABASES = {
     "influx": {
         "HOST": os.environ.get("INFLUXDB_HOSTNAME"),
         "PORT": os.environ.get("INFLUXDB_PORT"),
+        "NAME": os.environ.get("INFLUXDB_DB"),
         "ADMIN_USER": os.environ.get("INFLUXDB_ADMIN_USER"),
         "ADMIN_PASS": os.environ.get("INFLUXDB_ADMIN_PASSWORD")
     }

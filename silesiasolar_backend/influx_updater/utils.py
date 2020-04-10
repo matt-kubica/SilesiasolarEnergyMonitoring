@@ -11,8 +11,6 @@ import logging
 
 logger = logging.getLogger('influx_updater')
 
-def get_db_name(username):
-    return '{0}_influxdb'.format(username)
 
 
 def create_influx_account(username, password):
@@ -27,10 +25,8 @@ def create_influx_account(username, password):
         # test connection
         client.request(url='ping', expected_response_code=204)
 
-        db_name = get_db_name(username)
         client.create_user(username, password)
-        client.create_database(db_name)
-        client.grant_privilege('all', db_name, username)
+        client.grant_privilege('all', settings.DATABASES['influx']['NAME'], username)
         # TODO: add retention policy
         client.close()
     except (ConnectionError, InfluxDBClientError, InfluxDBServerError, Exception) as exc:
@@ -41,7 +37,7 @@ def create_influx_account(username, password):
 
 
 
-def updated_influx():
+def update_influx():
     meters = Meter.objects.all()
     logger.info('Meters to update: {0}'.format(len(meters)))
 
@@ -52,10 +48,11 @@ def updated_influx():
             username=settings.DATABASES['influx']['ADMIN_USER'],
             password=settings.DATABASES['influx']['ADMIN_PASS']
         )
+        influx_client.switch_database(settings.DATABASES['influx']['NAME'])
         influx_client.request(url='ping', expected_response_code=204)
     except (ConnectionError, InfluxDBClientError, InfluxDBServerError, Exception) as exc:
-        logger.error('Cannot connect to influxdb server -> {0}:{1}'.format(settings.DATABASES['influx']['HOST'],
-                                                                            settings.DATABASES['influx']['PORT']))
+        logger.error('Cannot connect to influxdb server on {0}:{1} database: {2}'.format(
+            settings.DATABASES['influx']['HOST'], settings.DATABASES['influx']['PORT'], settings.DATABASES['influx']['NAME']))
         logger.error('Data won\'t be retrieved from meters...')
         return
 
@@ -77,6 +74,7 @@ def updated_influx():
                     'measurement': register.measurement,
                     'tags': {
                         'unit': register.unit,
+                        'user_id': meter.user.id,
                         'location_id': meter.location.id,
                         'meter_id': meter.id
                     },
@@ -86,15 +84,14 @@ def updated_influx():
                 }
                 measurements.append(measurement)
             except (UnknownDatatypeException, ReadError, UnknownFunctioncodeException) as exc:
-                logger.warning('Cannot read {0} register, provided function_code = {1}, data_type = {2}'.format(
-                    register.address, register.function_code, register.type))
+                logger.warning('Cannot read {0} register, provided function_code = {1}, data_type = {2}\nException message:\n{3}'.format(
+                    register.address, register.function_code, register.type, str(exc)))
                 continue
 
-        influx_client.switch_database(get_db_name(meter.user))
-        if not influx_client.write_points(measurements):
+        if not influx_client.write_points(measurements, time_precision='m', protocol='json'):
             logger.error('Cannot write data points from {0} to influx'.format(meter))
         else:
-            logger.debug('Updated influx with data from {0}'.format(meter))
+            logger.debug('Updated influx with data from {0}\nData:\n{1}'.format(meter, measurements))
         measurements.clear()
         modbus_client.close()
 

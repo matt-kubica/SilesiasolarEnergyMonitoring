@@ -41,8 +41,24 @@ services:
     networks:
       - default_network
 
+  grafana:
+    container_name: silesiasolar_grafana
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    networks:
+      - default_network
+    depends_on:
+      - influx
+    env_file:
+      - ./.env.dev
+    volumes:
+      - ./grafana:/etc/grafana
+      - grafana_data:/var/lib/grafana
+
+
+
   modbustcp_server:
-    container_name: modbustcp_server
     build: ../virtual_modbustcp_server
     command: python -u modbustcp_server.py
     ports:
@@ -53,6 +69,8 @@ services:
 volumes:
   postgres_data:
   influxdb_data:
+  grafana_data:
+  provisioning:
 
 networks:
   default_network:

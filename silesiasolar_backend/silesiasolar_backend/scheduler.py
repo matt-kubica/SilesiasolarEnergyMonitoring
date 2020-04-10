@@ -3,7 +3,7 @@ import logging
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.conf import settings
 
-from influx_updater.utils import updated_influx
+from influx_updater.utils import update_influx
 
 
 scheduler = None
@@ -16,5 +16,5 @@ def start():
 
     logging.getLogger('apscheduler')
 
-    scheduler.add_job(updated_influx, trigger='cron', minute="*/1")
+    scheduler.add_job(update_influx, trigger='cron', minute="*/1")
     scheduler.start()
