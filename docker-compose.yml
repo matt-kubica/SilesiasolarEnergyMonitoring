@@ -3,10 +3,10 @@ version: '3.3'
 services:
   backend:
     container_name: silesiasolar_backend
-    build: ./
+    build: ./silesiasolar_backend
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./:/app
+      - ./silesiasolar_backend:/app
     ports:
       - 8000:8000
     env_file:
@@ -53,13 +53,13 @@ services:
     env_file:
       - ./.env.dev
     volumes:
-      - ./grafana:/etc/grafana
+      - ./grafana_config:/etc/grafana
       - grafana_data:/var/lib/grafana
 
 
 
   modbustcp_server:
-    build: ../virtual_modbustcp_server
+    build: ./virtual_modbustcp_server
     command: python -u modbustcp_server.py
     ports:
       - 502:502
