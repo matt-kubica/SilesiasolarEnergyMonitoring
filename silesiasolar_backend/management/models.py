@@ -25,7 +25,7 @@ class Meter(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
 
     # host = models.CharField(max_length=15, null=False, validators=[RegexValidator(regex=ip_regex)])
-    host = models.CharField(max_length=32, null=False)
+    host = models.CharField(max_length=64, null=False)
     port = models.PositiveIntegerField(null=False)
     slave_address = models.PositiveSmallIntegerField(null=False)
 

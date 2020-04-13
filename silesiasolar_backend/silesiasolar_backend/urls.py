@@ -20,6 +20,7 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('', include('management.urls')),
     path('', include('admin_management.urls')),
+    path('', include('influx_api.urls')),
 ]
 
 
