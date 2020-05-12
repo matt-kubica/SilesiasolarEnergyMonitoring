@@ -71,7 +71,7 @@ SCHEDULER_CONFIG = {
         "type": "threadpool"
     },
 }
-SCHEDULER_AUTOSTART = True
+SCHEDULER_AUTOSTART = False
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
