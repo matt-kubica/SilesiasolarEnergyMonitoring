@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Location, Meter, Register
+from .models import Location, Meter, Register, Host, Measurement, ChosenMeasurements
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,9 +7,9 @@ class LocationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MeterSerializer(serializers.ModelSerializer):
+class HostSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Meter
+        model = Host
         fields = '__all__'
 
     def validate(self, attrs):
@@ -19,8 +19,25 @@ class MeterSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class MeterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Meter
+        fields ='__all__'
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Register
         fields = '__all__'
 
+
+class MeasurementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Measurement
+        fields = '__all__'
+
+
+class ChosenMeasurementsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChosenMeasurements
+        fields = '__all__'
