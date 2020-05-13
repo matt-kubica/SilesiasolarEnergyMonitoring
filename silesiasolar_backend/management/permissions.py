@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from .models import Host
 from rest_framework import permissions
 
 
@@ -10,9 +11,12 @@ class DoesRequestingUserExist(permissions.BasePermission):
         return False
 
 
-class IsAllowedToPost(permissions.BasePermission):
+class IsLocationOwner(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        if request.method == 'POST':
+        if request.method in ('POST', 'PUT', 'DELETE'):
             return request.user.id == request.data['user']
-        return True
+        elif request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return False

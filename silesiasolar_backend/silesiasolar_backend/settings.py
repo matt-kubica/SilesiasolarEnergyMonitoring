@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'management',
     'admin_management',
     'influx_updater',
+    'influx_api',
 
     'rest_framework',
     'knox',
@@ -70,7 +71,7 @@ SCHEDULER_CONFIG = {
         "type": "threadpool"
     },
 }
-SCHEDULER_AUTOSTART = True
+SCHEDULER_AUTOSTART = False
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -189,6 +190,11 @@ LOGGING = {
             'propagate': False
         },
         'influx_updater': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+        'influx_api': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': False
