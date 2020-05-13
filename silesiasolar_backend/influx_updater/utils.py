@@ -5,7 +5,7 @@ from django.conf import settings
 
 from .modbus_client import ModbusClient
 from .exceptions import UnknownDatatypeException, ReadError, UnknownFunctioncodeException, InfluxUserNotCreated
-from management.models import Meter, Register
+from management.models import Host, Register, ChosenMeasurements
 
 import logging
 
@@ -39,8 +39,8 @@ def create_influx_account(username, password):
 
 
 def update_influx():
-    meters = Meter.objects.all()
-    logger.info('Meters to update: {0}'.format(len(meters)))
+    hosts = Host.objects.all()
+    logger.info('Hosts to update: {0}'.format(len(hosts)))
 
     try:
         influx_client = InfluxDBClient(
@@ -58,42 +58,42 @@ def update_influx():
         return
 
 
-    for meter in meters:
+    for host in hosts:
         try:
-            modbus_client = ModbusClient(host=meter.host, port=meter.port, slave_address=meter.slave_address)
+            modbus_client = ModbusClient(host=host.ip, port=host.port, slave_address=host.slave_address)
         except ConnectionError as exc:
-            logger.warning('Cannot connect to meter {0}:{1}, skipping...'.format(meter.host, meter.port))
+            logger.warning('Cannot connect to host {0}:{1}, skipping...'.format(host.ip, host.port))
             continue
 
-        registers = Register.objects.filter(meter_type=meter.meter_type)
-        measurements = []
 
-        for register in registers:
+        data_points = []
+        for chosen_measurement in ChosenMeasurements.objects.filter(host=host):
+            register = Register.objects.get(measurement=chosen_measurement.measurement, meter=host.meter)
             try:
                 value = modbus_client.get_value(register_address=register.address, data_type=register.type, function_code=register.function_code)
-                measurement = {
+                data_point = {
                     'measurement': register.measurement,
                     'tags': {
                         'unit': register.unit,
-                        'user_id': meter.user.id,
-                        'location_id': meter.location.id,
-                        'meter_id': meter.id
+                        'user_id': host.user.id,
+                        'location_id': host.location.id,
+                        'host': host.id
                     },
                     'fields': {
                         'value': value
                     }
                 }
-                measurements.append(measurement)
+                data_points.append(data_point)
             except (UnknownDatatypeException, ReadError, UnknownFunctioncodeException) as exc:
                 logger.warning('Cannot read {0} register, provided function_code = {1}, data_type = {2}\nException message:\n{3}'.format(
                     register.address, register.function_code, register.type, str(exc)))
                 continue
 
-        if not influx_client.write_points(measurements, time_precision='m', protocol='json'):
-            logger.error('Cannot write data points from {0} to influx'.format(meter))
+        if not influx_client.write_points(data_points, time_precision='m', protocol='json'):
+            logger.error('Cannot write data points from {0} to influx'.format(host))
         else:
-            logger.debug('Updated influx with data from {0}\nData:\n{1}'.format(meter, measurements))
-        measurements.clear()
+            logger.debug('Updated influx with data from {0}\nData:\n{1}'.format(host, data_points))
+        data_points.clear()
         modbus_client.close()
 
     influx_client.close()
