@@ -100,7 +100,7 @@ class RegisterAPI(views.APIView):
     """ getting all registers """
     def get(self, request, format=None):
         registers = Register.objects.all()
-        serializer = RegisterSerailizer(registers, many=True)
+        serializer = RegisterSerializer(registers, many=True)
         return Response(serializer.data)
 
     """ adding new register """
