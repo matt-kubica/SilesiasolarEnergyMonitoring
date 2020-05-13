@@ -7,6 +7,9 @@ from .utils import DataTypes, FunctionCodes, MeterTypes, MeasurementTypes
 zip_code_regex = '^[0-9]{2}-[0-9]{3}$'
 ip_regex = '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 class Location(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

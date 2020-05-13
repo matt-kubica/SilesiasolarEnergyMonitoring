@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from accounts.models import User
 from .models import Host
 from rest_framework import permissions
 
