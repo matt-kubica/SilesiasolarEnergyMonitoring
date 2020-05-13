@@ -1,36 +1,62 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
+from .models import User
 
 from influx_updater.utils import create_influx_account
+from influx_updater.exceptions import InfluxUserNotCreated
 
 # serialize user data required for registration
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['id', 'username']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
+
     class Meta:
+        fields = '__all__'
         model = User
-        fields = ['id', 'username', 'email', 'password']
-        extra_kwargs = { 'password': {'write_only': True} }
+
 
     def create(self, validated_data):
-        user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
-        create_influx_account(validated_data['username'], validated_data['password'])
+        username = validated_data['username']
+        email = validated_data['email']
+        password = validated_data['password']
+
+        # provided username already in database
+        if len(User.objects.filter(username=username)) != 0:
+            raise serializers.ValidationError({"error": "Provided username is already taken"})
+
+        # provided email already in database
+        if len(User.objects.filter(email=email)) != 0:
+            raise serializers.ValidationError({"error": "Provided email is already taken"})
+
+        # try to create influx account
+        try:
+            create_influx_account(username=username, password=password)
+        except InfluxUserNotCreated:
+            raise serializers.ValidationError({"error": "Some problem occurred, user cannot be registered"})
+
+        user = User.objects.create_user(username, email, password)
         return user
 
 
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
 
-    def validate(self, data):
-        # print('LoginSerializer -> validate called')
-        # print(data)
-        user = authenticate(**data)
-        if user and  user.is_active:
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+
+
+    def save(self):
+        user = authenticate(**self.validated_data)
+        if user:
             return user
-        raise serializers.ValidationError("Incorrect credentials")
+        raise serializers.ValidationError({"error": "Incorrect credentials"})

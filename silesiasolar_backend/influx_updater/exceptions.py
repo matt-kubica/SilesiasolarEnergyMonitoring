@@ -7,3 +7,6 @@ class UnknownDatatypeException(Exception):
 
 class UnknownFunctioncodeException(Exception):
     pass
+
+class InfluxUserNotCreated(Exception):
+    pass

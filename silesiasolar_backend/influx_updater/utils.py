@@ -4,7 +4,7 @@ from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
 from django.conf import settings
 
 from .modbus_client import ModbusClient
-from .exceptions import UnknownDatatypeException, ReadError, UnknownFunctioncodeException
+from .exceptions import UnknownDatatypeException, ReadError, UnknownFunctioncodeException, InfluxUserNotCreated
 from management.models import Meter, Register
 
 import logging
@@ -33,6 +33,7 @@ def create_influx_account(username, password):
         logger.error('Cannot connect to influxdb server -> {0}:{1}'.format(settings.DATABASES['influx']['HOST'],
                                                                             settings.DATABASES['influx']['PORT']))
         logger.error('Influx user and database could not be created for {0}'.format(username))
+        raise InfluxUserNotCreated
 
 
 

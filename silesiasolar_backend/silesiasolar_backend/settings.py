@@ -30,7 +30,7 @@ SECRET_KEY = '9z$k1*f(r7%48&l87j6^sz)0k-rb4ii!9&)gcg-e05ca7@gtyi'
 DEBUG = int(os.environ.get('DEBUG', default=1))
 
 ADMIN_ENABLED = False
-
+AUTH_USER_MODEL = 'accounts.User'
 ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {

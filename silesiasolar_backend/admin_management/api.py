@@ -1,8 +1,9 @@
-from knox.auth import User
+
 from rest_framework import views, status
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
+from accounts.models import User
 from accounts.serializers import UserSerializer
 from management.models import Location, Meter, Host, Measurement, Register
 from management.serializers import LocationSerializer, MeterSerializer, HostSerializer, MeasurementSerializer, RegisterSerializer
