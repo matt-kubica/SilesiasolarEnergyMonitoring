@@ -95,26 +95,22 @@ class MeterAPI(views.APIView):
         return Response(serializer.data)
 
 
-# class MeasurementAPI(views.APIView):
-#     permission_classes = [DoesRequestingUserExist, ]
-#
-#     """ getting all available measurements, user needs to be authenticated even though measurement is not directly assigned to user """
-#     def get(self, request, format=None):
-#         measurements = Measurement.objects.all()
-#         serializer = MeasurementSerializer(measurements, many=True)
-#         return Response(serializer.data)
-
-
-class RegisterDetailByMeterAPI(views.APIView):
+class MeasurementDetailByMeterAPI(views.APIView):
     permission_classes = [DoesRequestingUserExist, ]
 
-    """ getting all registers assigned to certain meter """
+    """ getting all measurements available for certain meter """
     def get(self, request, meter_id, format=None):
         registers = Register.objects.filter(meter=meter_id)
-        if registers is None:
-            return Response({"error": "Cannot find registers for {0} meter"}, status=status.HTTP_404_NOT_FOUND)
+        if not len(registers):
+            return Response({"error": "Cannot find measurements for meter with id {0}".format(meter_id)}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = RegisterSerializer(registers, many=True)
+
+        measurements = []
+        for register in registers:
+            measurements.append(Measurement.objects.get(measurement=register.measurement))
+
+
+        serializer = MeasurementSerializer(measurements, many=True)
         return Response(serializer.data)
 
 

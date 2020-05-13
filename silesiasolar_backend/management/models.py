@@ -80,7 +80,7 @@ class Register(models.Model):
     function_code = models.PositiveIntegerField(choices=FunctionCodes.choices(), null=False)
 
     def __str__(self):
-        return 'meter: {0}, measurement: {1}, address: {2}'.format(self.meter)
+        return 'meter: {0}, measurement: {1}, address: {2}'.format(self.meter, self.measurement, self.address)
 
     class Meta:
         unique_together = ('meter', 'measurement', )
