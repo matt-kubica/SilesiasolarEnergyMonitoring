@@ -14,7 +14,7 @@ API endpoints for regular users, regular user is only allowed to have all access
 
 class LocationAPI(views.APIView):
     permission_classes = [DoesRequestingUserExist, IsLocationOwner, ]
-    # TODO: additional permissions ?
+
 
     """ getting all locations of authenticated user """
     def get(self, request, format=None):
@@ -45,8 +45,10 @@ class ChosenMeasurementsAPI(views.APIView):
         except Host.DoesNotExist:
             return Response({"error": "Host with id {0} does not exist".format(host_id)}, status=status.HTTP_404_NOT_FOUND)
 
+        # TODO: move this to permission
         if host.user != request.user:
             return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
+
         chosen_measurements = ChosenMeasurements.objects.filter(host=host_id)
         serializer = ChosenMeasurementsSerializer(chosen_measurements, many=True)
         return Response(serializer.data)
@@ -60,9 +62,11 @@ class ChosenMeasurementsAPI(views.APIView):
             return Response({"error": "Host with id {0} does not exist".format(host_id)},
                             status=status.HTTP_404_NOT_FOUND)
 
+        # TODO: move this to permission
         if host.user != request.user:
             return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
 
+        # TODO: move this to serializer
         data = []
         for measurement in request.data['measurements']:
             partial_data = {
