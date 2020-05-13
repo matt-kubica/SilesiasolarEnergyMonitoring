@@ -72,7 +72,7 @@ def update_influx():
             try:
                 value = modbus_client.get_value(register_address=register.address, data_type=register.type, function_code=register.function_code)
                 data_point = {
-                    'measurement': register.measurement,
+                    'measurement': register.measurement.measurement,
                     'tags': {
                         'unit': register.unit,
                         'user_id': host.user.id,
