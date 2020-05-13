@@ -9,7 +9,7 @@ from influx_updater.exceptions import InfluxUserNotCreated
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username']
+        fields = ['id', 'username', 'email']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -52,7 +52,7 @@ class LoginSerializer(serializers.Serializer):
 
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = '__all__'
 
 
     def save(self):
