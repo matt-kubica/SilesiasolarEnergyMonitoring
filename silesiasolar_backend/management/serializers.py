@@ -41,3 +41,5 @@ class ChosenMeasurementsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChosenMeasurements
         fields = '__all__'
+
+
