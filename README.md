@@ -251,4 +251,115 @@
           }
       ]
       ```
+      
+### AdminManagementAPI 
+
+* `/admin/locations [GET, POST]`
+   * `GET` - get all locations
+   * `POST` - add new location, same request body as for `/user/locations`
+   
+* `/admin/locations/<int:pk> [GET]` - get location with certain id
+
+* `/admin/hosts [GET, POST]`
+   * `GET` - get all hosts
+   * `POST` - add new host, note that provided location id must point to location that belongs to user with provided id
+   
+      **Request body**:
+      ```json
+      {
+           "ip": "127.0.0.1",
+           "port": 2282,
+           "slave_address": 1,
+           "description": "test",
+           "user": 1,
+           "location": 1,
+           "meter": 3
+      }
+      ```
+      
+      **Response**:
+      ```json
+      {
+          "id": 8,
+          "ip": "127.0.0.1",
+          "port": 2282,
+          "slave_address": 1,
+          "description": "test",
+          "user": 1,
+          "location": 1,
+          "meter": 3
+      }
+      ```
+
+* `/admin/meters [GET, POST]`
+   * `GET` - get all available meters
+   * `POST` - add new meter to database
+   
+      **Request body**:
+      ```json
+      {
+          "name": "sdm330",
+          "type": 2
+      }
+      ```
+      
+      **Response**:
+      ```json
+      {
+          "id": 5,
+          "name": "sdm330",
+          "type": 2
+      }
+      ```
  
+ * `/admin/measurements [GET, POST]`
+   * `GET` - get all available measurements
+   * `POST` - add new measurement to database
+   
+      **Request body**:
+      ```json
+      {
+         "measurement": "current",
+         "type": 1
+      }
+      ```
+      
+      **Response**:
+      ```json
+      {
+          "measurement": "current",
+          "type": 1
+      }
+      ```
+ 
+ 
+ * `/admin/registers [GET, POST]`
+   * `GET` - get all available registers
+   * `POST` - add new register to database, note that measurement must already exist in database
+   
+      **Request body**:
+      ```json
+      {
+          "address": 12,
+          "measurement": "current",
+          "unit": "A",
+          "type": 1,
+          "function_code": 3,
+          "meter": 3
+      }
+      ```
+      
+      **Response**:
+      ```json {
+          "id": 8,
+          "address": 12,
+          "unit": "A",
+          "type": 1,
+          "function_code": 3,
+          "meter": 3,
+          "measurement": "current"
+      }
+      ```
+      
+* `/admin/users [GET]` - get all users
+* `/admin/users/<int:pk> [GET]` - get certain user
