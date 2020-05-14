@@ -28,7 +28,7 @@ class Location(models.Model):
 
 
 class Meter(models.Model):
-    name = models.CharField(max_length=64, null=False, unique=True)
+    name = models.CharField(max_length=64, null=False, primary_key=True)
     type = models.PositiveIntegerField(choices=MeterTypes.choices(), null=False)
 
     def __str__(self):
@@ -39,11 +39,11 @@ class Meter(models.Model):
 
 
 class Measurement(models.Model):
-    measurement = models.CharField(max_length=64, null=False, primary_key=True)
+    name = models.CharField(max_length=64, null=False, primary_key=True)
     type = models.PositiveIntegerField(choices=MeasurementTypes.choices(), null=False)
 
     def __str__(self):
-        return self.measurement
+        return self.name
 
 
 class Host(models.Model):
@@ -54,7 +54,7 @@ class Host(models.Model):
     ip = models.CharField(max_length=64, null=False)
     port = models.PositiveIntegerField(null=False)
     slave_address = models.PositiveSmallIntegerField(null=False)
-    description = models.CharField(max_length=128)
+    description = models.CharField(max_length=128, null=True)
 
     def __str__(self):
         return '{0}:{1}:{2}'.format(self.ip, self.port, self.slave_address)
@@ -63,7 +63,7 @@ class Host(models.Model):
         unique_together = ('ip', 'port', 'slave_address', )
 
 
-class ChosenMeasurements(models.Model):
+class AssignedMeasurement(models.Model):
     host = models.ForeignKey(Host, on_delete=models.CASCADE)
     measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
 

@@ -5,7 +5,7 @@ from django.conf import settings
 
 from .modbus_client import ModbusClient
 from .exceptions import UnknownDatatypeException, ReadError, UnknownFunctioncodeException, InfluxUserNotCreated
-from management.models import Host, Register, ChosenMeasurements
+from management.models import Host, Register, AssignedMeasurement
 
 import logging
 
@@ -67,12 +67,12 @@ def update_influx():
 
 
         data_points = []
-        for chosen_measurement in ChosenMeasurements.objects.filter(host=host):
-            register = Register.objects.get(measurement=chosen_measurement.measurement, meter=host.meter)
+        for assigned_measurement in AssignedMeasurement.objects.filter(host=host):
+            register = Register.objects.get(measurement=assigned_measurement.measurement, meter=host.meter)
             try:
                 value = modbus_client.get_value(register_address=register.address, data_type=register.type, function_code=register.function_code)
                 data_point = {
-                    'measurement': register.measurement.measurement,
+                    'measurement': register.measurement.name,
                     'tags': {
                         'unit': register.unit,
                         'user_id': host.user.id,

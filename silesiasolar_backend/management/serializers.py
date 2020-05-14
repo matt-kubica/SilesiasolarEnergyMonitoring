@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Location, Meter, Register, Host, Measurement, ChosenMeasurements
+from .models import Location, Meter, Register, Host, Measurement, AssignedMeasurement
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,9 +37,9 @@ class MeasurementSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ChosenMeasurementsSerializer(serializers.ModelSerializer):
+class AssignedMeasurementSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ChosenMeasurements
+        model = AssignedMeasurement
         fields = '__all__'
 
 

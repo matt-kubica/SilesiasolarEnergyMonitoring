@@ -2,8 +2,8 @@
 from rest_framework import views, status
 from rest_framework.response import Response
 
-from .models import Location, Register, Meter, Host, ChosenMeasurements, Measurement
-from .serializers import LocationSerializer, MeterSerializer, HostSerializer, ChosenMeasurementsSerializer, MeasurementSerializer, RegisterSerializer
+from .models import Location, Register, Meter, Host, AssignedMeasurement, Measurement
+from .serializers import LocationSerializer, MeterSerializer, HostSerializer, AssignedMeasurementSerializer, MeasurementSerializer, RegisterSerializer
 from .permissions import DoesRequestingUserExist, IsLocationOwner
 
 
@@ -33,7 +33,7 @@ class LocationAPI(views.APIView):
     # TODO: put and delete
 
 
-class ChosenMeasurementsAPI(views.APIView):
+class AssignedMeasurementAPI(views.APIView):
     permission_classes = [DoesRequestingUserExist, ]
 
 
@@ -49,8 +49,8 @@ class ChosenMeasurementsAPI(views.APIView):
         if host.user != request.user:
             return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
 
-        chosen_measurements = ChosenMeasurements.objects.filter(host=host_id)
-        serializer = ChosenMeasurementsSerializer(chosen_measurements, many=True)
+        chosen_measurements = AssignedMeasurement.objects.filter(host=host_id)
+        serializer = AssignedMeasurementSerializer(chosen_measurements, many=True)
         return Response(serializer.data)
 
     """ adding measurements for certain host """
@@ -75,7 +75,7 @@ class ChosenMeasurementsAPI(views.APIView):
             }
             data.append(partial_data)
 
-        serializer = ChosenMeasurementsSerializer(data=data, many=True)
+        serializer = AssignedMeasurementSerializer(data=data, many=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
