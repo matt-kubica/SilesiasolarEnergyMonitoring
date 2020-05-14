@@ -65,7 +65,6 @@ def update_influx():
             logger.warning('Cannot connect to host {0}:{1}, skipping...'.format(host.ip, host.port))
             continue
 
-
         data_points = []
         for assigned_measurement in AssignedMeasurement.objects.filter(host=host):
             register = Register.objects.get(measurement=assigned_measurement.measurement, meter=host.meter)
@@ -89,10 +88,14 @@ def update_influx():
                     register.address, register.function_code, register.type, str(exc)))
                 continue
 
-        if not influx_client.write_points(data_points, time_precision='m', protocol='json'):
-            logger.error('Cannot write data points from {0} to influx'.format(host))
+        if not data_points:
+            logger.warning('No measurements assigned to {0}'.format(host))
         else:
-            logger.debug('Updated influx with data from {0}\nData:\n{1}'.format(host, data_points))
+            if not influx_client.write_points(data_points, time_precision='m', protocol='json'):
+                logger.error('Cannot write data points from {0} to influx'.format(host))
+            else:
+                logger.debug('Updated influx with data from {0}\nData:\n{1}'.format(host, data_points))
+
         data_points.clear()
         modbus_client.close()
 

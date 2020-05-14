@@ -6,7 +6,7 @@ urlpatterns = [
     path('user/hosts/<int:host_id>/measurements', AssignedMeasurementAPI.as_view()),
     path('user/hosts', HostAPI.as_view()),
 
-    path('meters/<int:meter_id>/measurements', MeasurementDetailByMeterAPI.as_view()),
+    path('meters/<str:meter_id>/measurements', MeasurementDetailByMeterAPI.as_view()),
     path('meters', MeterAPI.as_view()),
 
 

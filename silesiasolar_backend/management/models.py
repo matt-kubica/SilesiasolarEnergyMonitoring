@@ -1,7 +1,7 @@
 from django.core.validators import RegexValidator
 from django.db import models
 
-from accounts.models import User
+# from accounts.models import User
 from .utils import DataTypes, FunctionCodes, MeterTypes, MeasurementTypes
 
 zip_code_regex = '^[0-9]{2}-[0-9]{3}$'

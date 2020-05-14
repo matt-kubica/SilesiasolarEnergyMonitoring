@@ -104,10 +104,9 @@ class MeasurementDetailByMeterAPI(views.APIView):
         if not len(registers):
             return Response({"error": "Cannot find measurements for meter with id {0}".format(meter_id)}, status=status.HTTP_404_NOT_FOUND)
 
-
         measurements = []
         for register in registers:
-            measurements.append(Measurement.objects.get(measurement=register.measurement))
+            measurements.append(Measurement.objects.get(name=register.measurement))
 
 
         serializer = MeasurementSerializer(measurements, many=True)
