@@ -106,8 +106,23 @@ class AssignedMeasurementAPI(views.APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # TODO: put and delete
 
+    def delete(self, request, host_id, format=None):
+
+        try:
+            host = Host.objects.filter(user=request.user).get(id=host_id)
+        except Host.DoesNotExist:
+            return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
+
+        to_delete = []
+        for measurement in request.data['measurements']:
+            try:
+                to_delete.append(AssignedMeasurement.objects.get(host=host, measurement=measurement))
+            except AssignedMeasurement.DoesNotExist:
+                return Response({"error": "Measurement \'{0}\' wasn't assigned or doesn't exist".format(measurement)}, status=status.HTTP_400_BAD_REQUEST)
+
+        [ am.delete() for am in to_delete ]
+        return Response(status=status.HTTP_200_OK)
 
 
 class MeterAPI(views.APIView):
