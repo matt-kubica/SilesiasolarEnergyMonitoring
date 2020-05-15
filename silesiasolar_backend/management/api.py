@@ -3,7 +3,7 @@ from rest_framework import views, status
 from rest_framework.response import Response
 
 from .models import Location, Register, Meter, Host, AssignedMeasurement, Measurement
-from .serializers import LocationSerializer, MeterSerializer, HostSerializer, AssignedMeasurementSerializer, MeasurementSerializer, RegisterSerializer
+from .serializers import LocationSerializer, LocationUpdateSerializer, MeterSerializer, HostSerializer, AssignedMeasurementSerializer, MeasurementSerializer, RegisterSerializer
 from .permissions import DoesRequestingUserExist, IsLocationOwner
 
 
@@ -30,7 +30,41 @@ class LocationAPI(views.APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # TODO: put and delete
+
+
+class LocationDetailAPI(views.APIView):
+    permission_classes = [DoesRequestingUserExist, ]
+
+    """ getting certain location by id, must belong to user """
+    def get(self, request, pk, format=None):
+        try:
+            location = Location.objects.filter(user=request.user).get(id=pk)
+            serializer = LocationSerializer(location, many=False)
+            return Response(serializer.data)
+        except Location.DoesNotExist:
+            return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
+
+    """ deleting certain location by id, must belong to user """
+    def delete(self, request, pk, format=None):
+        try:
+            location = Location.objects.filter(user=request.user).get(id=pk)
+            location.delete()
+            return Response({"info": "Location with id {0} has been deleted".format(pk)}, status=status.HTTP_200_OK)
+        except Location.DoesNotExist:
+            return Response({"error": "Permission denied."}, status=status.HTTP_403_FORBIDDEN)
+
+    """ patching certain location by id, must belong to user """
+    def patch(self, request, pk, format=None):
+        try:
+            location = Location.objects.filter(user=request.user).get(id=pk)
+            print(location)
+            serializer = LocationUpdateSerializer(location, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Location.DoesNotExist:
+            return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
 
 
 class AssignedMeasurementAPI(views.APIView):
@@ -41,15 +75,11 @@ class AssignedMeasurementAPI(views.APIView):
     def get(self, request, host_id, format=None):
 
         try:
-            host = Host.objects.get(id=host_id)
+            host = Host.objects.filter(user=request.user).get(id=host_id)
         except Host.DoesNotExist:
-            return Response({"error": "Host with id {0} does not exist".format(host_id)}, status=status.HTTP_404_NOT_FOUND)
-
-        # TODO: move this to permission
-        if host.user != request.user:
             return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
 
-        chosen_measurements = AssignedMeasurement.objects.filter(host=host_id)
+        chosen_measurements = AssignedMeasurement.objects.filter(host=host)
         serializer = AssignedMeasurementSerializer(chosen_measurements, many=True)
         return Response(serializer.data)
 
@@ -57,25 +87,20 @@ class AssignedMeasurementAPI(views.APIView):
     def post(self, request, host_id, format=None):
 
         try:
-            host = Host.objects.get(id=host_id)
+            host = Host.objects.filter(user=request.user).get(id=host_id)
         except Host.DoesNotExist:
-            return Response({"error": "Host with id {0} does not exist".format(host_id)},
-                            status=status.HTTP_404_NOT_FOUND)
-
-        # TODO: move this to permission
-        if host.user != request.user:
             return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
 
         # TODO: move this to serializer
-        data = []
+        assignments = []
         for measurement in request.data['measurements']:
-            partial_data = {
+            assigment = {
                 "host": host.id,
                 "measurement": measurement
             }
-            data.append(partial_data)
+            assignments.append(assigment)
 
-        serializer = AssignedMeasurementSerializer(data=data, many=True)
+        serializer = AssignedMeasurementSerializer(data=assignments, many=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

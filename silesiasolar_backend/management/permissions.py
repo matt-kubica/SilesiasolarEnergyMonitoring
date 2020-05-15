@@ -14,7 +14,7 @@ class DoesRequestingUserExist(permissions.BasePermission):
 class IsLocationOwner(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        if request.method in ('POST', 'PUT', 'DELETE'):
+        if request.method in ('POST', 'PUT', 'DELETE', 'PATCH'):
             return request.user.id == request.data['user']
         elif request.method in permissions.SAFE_METHODS:
             return True

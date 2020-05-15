@@ -6,6 +6,18 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = '__all__'
 
+class LocationUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = [
+            'street',
+            'number',
+            'city',
+            'zip_code',
+            'coord_x',
+            'coord_y'
+        ]
+
 
 class HostSerializer(serializers.ModelSerializer):
     class Meta:
