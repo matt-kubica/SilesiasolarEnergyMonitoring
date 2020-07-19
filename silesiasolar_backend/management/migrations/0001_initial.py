@@ -54,14 +54,14 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('ip', models.CharField(max_length=64)),
                 ('port', models.PositiveIntegerField()),
-                ('slave_address', models.PositiveSmallIntegerField()),
+                ('subordinate_address', models.PositiveSmallIntegerField()),
                 ('description', models.CharField(max_length=128, null=True)),
                 ('location', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='management.Location')),
                 ('meter', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='management.Meter')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'unique_together': {('ip', 'port', 'slave_address')},
+                'unique_together': {('ip', 'port', 'subordinate_address')},
             },
         ),
         migrations.CreateModel(
