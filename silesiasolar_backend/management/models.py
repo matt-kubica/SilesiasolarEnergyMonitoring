@@ -53,14 +53,14 @@ class Host(models.Model):
 
     ip = models.CharField(max_length=64, null=False)
     port = models.PositiveIntegerField(null=False)
-    slave_address = models.PositiveSmallIntegerField(null=False)
+    subordinate_address = models.PositiveSmallIntegerField(null=False)
     description = models.CharField(max_length=128, null=True)
 
     def __str__(self):
-        return '{0}:{1}:{2}'.format(self.ip, self.port, self.slave_address)
+        return '{0}:{1}:{2}'.format(self.ip, self.port, self.subordinate_address)
 
     class Meta:
-        unique_together = ('ip', 'port', 'slave_address', )
+        unique_together = ('ip', 'port', 'subordinate_address', )
 
 
 class AssignedMeasurement(models.Model):

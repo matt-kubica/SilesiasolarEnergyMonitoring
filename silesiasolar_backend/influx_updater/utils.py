@@ -60,7 +60,7 @@ def update_influx():
 
     for host in hosts:
         try:
-            modbus_client = ModbusClient(host=host.ip, port=host.port, slave_address=host.slave_address)
+            modbus_client = ModbusClient(host=host.ip, port=host.port, subordinate_address=host.subordinate_address)
         except ConnectionError as exc:
             logger.warning('Cannot connect to host {0}:{1}, skipping...'.format(host.ip, host.port))
             continue

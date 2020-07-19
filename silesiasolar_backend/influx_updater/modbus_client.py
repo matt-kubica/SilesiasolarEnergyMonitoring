@@ -5,10 +5,10 @@ import numpy as np
 
 class ModbusClient(ModbusTcpClient):
 
-    def __init__(self, host, port, slave_address):
+    def __init__(self, host, port, subordinate_address):
         self.host = host
         self.port = port
-        self.slave_address = slave_address
+        self.subordinate_address = subordinate_address
         ModbusTcpClient.__init__(self, host=host, port=port)
         if not self.connect():
             raise ConnectionError('Cannot connect to {0}:{1}'.format(host, port))
@@ -37,14 +37,14 @@ class ModbusClient(ModbusTcpClient):
             raise UnknownDatatypeException('Unknown data type with id: {0}'.format(data_type))
 
         if function_code == FunctionCodes.READ_INPUT_REGISTERS:
-            response = self.read_input_registers(address=register_address, count=bytes_count, unit=self.slave_address)
+            response = self.read_input_registers(address=register_address, count=bytes_count, unit=self.subordinate_address)
         elif function_code == FunctionCodes.READ_HOLDING_REGISTERS:
-            response = self.read_input_registers(address=register_address, count=bytes_count, unit=self.slave_address)
+            response = self.read_input_registers(address=register_address, count=bytes_count, unit=self.subordinate_address)
         else:
             raise UnknownFunctioncodeException('Unknown function code: {0}'.format(function_code))
 
         if response.isError():
-            raise ReadError('Cannot get value from register: {0}, slave_address: {1}'.format(register_address, self.slave_address))
+            raise ReadError('Cannot get value from register: {0}, subordinate_address: {1}'.format(register_address, self.subordinate_address))
 
         return self.convert(response.registers, data_type)
 
